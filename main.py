@@ -2,9 +2,9 @@ from datetime import datetime
 from session import Session
 import os
 
-
-assert all(key in os.environ for key in [
-           'STUDENTID', 'PASSWORD', 'DESCRIPTION', 'PLACES', 'DELTA']), "Not all keys are provided"
+ENV_KEYS = ['STUDENTID', 'PASSWORD', 'DESCRIPTION', 'PLACES', 'DELTA']
+assert all(key in os.environ for key in ENV_KEYS), \
+    "Not all keys are provided: " + ', '.join(ENV_KEYS)
 
 username = os.environ['STUDENTID']
 password = os.environ['PASSWORD']
