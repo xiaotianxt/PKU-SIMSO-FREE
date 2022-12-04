@@ -3,7 +3,7 @@ import logging
 from functools import wraps
 from string import ascii_letters, digits
 from datetime import datetime, timedelta
-from requests import Session
+from pkuiaaa import IAAASession
 from urllib import parse
 from requests_toolbelt import MultipartEncoder
 
@@ -11,7 +11,7 @@ from const import URL
 from tools import prettify, format_date
 
 
-class Session(Session):
+class Session(IAAASession):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.headers.update({
@@ -45,23 +45,7 @@ class Session(Session):
 
     def login(self, username: str, password: str) -> bool:
         """登录门户，重定向出入校申请"""
-        # IAAA 登录
-        json = self.post(URL.OAUTHLOGIN, data={
-            "userName": username,
-            "appid": "portal2017",
-            "password": password,
-            "redirUrl": URL.LOGIN_REDIRECT,
-            "randCode": "",
-            "smsCode": "",
-            "optCode": "",
-        }).json()
-        assert json['success'], json
-
-        # 门户 token 验证
-        self.get(URL.SSO_LOGIN, params={
-            '_rand': random.random(),
-            'token': json['token']
-        })
+        super().login(username, password, 'portal2017', URL.LOGIN_REDIRECT)
 
         # 学生出入校重定向
         res = self.get(URL.STUDENT_EXEN_APP)
@@ -105,13 +89,14 @@ class Session(Session):
 
     def get_supplement(self):
         """获取补充信息"""
-        lxxx = self.status()['row']['lxxx']
-        lxxx.update(dzyx=lxxx['email'], lxdh=lxxx['yddh'])
-        assert all(k in lxxx for k in [
-                   'yddh', 'ssfjh', 'ssl', 'ssyq', 'dzyx', 'lxdh']), '无法获取住宿、联系信息'
-        return lxxx
+        info = self.status()['row']
+        lxxx = info['lxxx']
+        jbxx = info['jbxx']
+        res = {**lxxx, **jbxx, "dzyx": lxxx['email']}
+        del res['email'], res['xh'], res['xm'], res['xslb'], res['xsmc']
+        return res
 
-    def save_request(self, exen_type='园区往返', start='', end='', track='', places=[], description='', delta=0, **supplements):
+    def save_request(self, exen_type='园区往返', start='', end='', track='', places='', description='', delta=0, **supplements):
         """尝试保存出入校信息
         `exen_type`: 出入校类型
         `track`: 出入校出行轨迹
@@ -177,12 +162,12 @@ class Session(Session):
 
         logging.debug(prettify(template))
 
-        json = self.post(URL.SAVE_REQUEST, params={
-                         'applyType': 'yqwf'}, json=template).json()
+        if exen_type == '园区往返': params = {'applyType': 'yqwf'}
+        else: params = {}
+        json = self.post(URL.SAVE_REQUEST, params=params, json=template).json()
         assert json['success'], json
 
         self.sqbh = json['row']  # 申请编号
-        return
 
     def upload_img(self, img, cldms):
         assert self.sqbh, '请先获取申请编号！'

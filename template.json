@@ -1,0 +1,13 @@
+{
+  "studentid": "2200012345",
+  "password": "XXXXXXXXXX",
+  "exen_type": "一事一议的必要事项（就业、科研、学业等）",
+  "places": ["南门", "万柳园区"],
+  "description": "吃饭睡觉做科研",
+  "start": "万柳园区",
+  "end": "燕园",
+  "qdxm": "",
+  "zdxm": "万柳园区",
+  "track": "自行车",
+  "delta": 1
+}

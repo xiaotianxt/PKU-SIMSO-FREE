@@ -2,7 +2,6 @@ class URL:
     """验证是否一登录"""
     OAUTHLOGIN = "https://iaaa.pku.edu.cn/iaaa/oauthlogin.do"
     LOGIN_REDIRECT = "https://portal.pku.edu.cn/portal2017/ssoLogin.do"
-    SSO_LOGIN = "https://portal.pku.edu.cn/portal2017/ssoLogin.do"
     STUDENT_EXEN_APP = "https://portal.pku.edu.cn/portal2017/util/appSysRedir.do?appId=stuCampusExEn"
     SIMSO_LOGIN = "https://simso.pku.edu.cn/ssapi/simsoLogin"
     SAVE_REQUEST = "https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/saveSqxx"
