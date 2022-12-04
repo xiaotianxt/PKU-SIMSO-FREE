@@ -14,7 +14,7 @@ jobs:
       - name: 安装 python
         uses: actions/setup-python@v2
       - name: 安装依赖
-        run: pip3 install requests requests_toolbelt
+        run: pip3 install requests requests_toolbelt jstyleson
       - name: 设定时区
         uses: szenius/set-timezone@v1.0
         with:

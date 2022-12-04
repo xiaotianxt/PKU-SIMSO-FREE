@@ -1,12 +1,12 @@
 from datetime import datetime
 from session import Session
 import os
-import json
+import jstyleson
 
 ENV_KEYS = ['DATA']
 
 info_str = os.environ['DATA']
-info = json.loads(info_str)
+info = jstyleson.loads(info_str)
 username = info.pop('studentid')
 password = info.pop('password')
 
